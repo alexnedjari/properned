@@ -1,0 +1,5 @@
+Ce logiciel utilise les librairies suivantes :
+
+ - log4j 1.2.16
+ - common-io 1.3.2
+ - common-lang3 3.4

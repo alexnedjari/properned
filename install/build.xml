@@ -1,0 +1,48 @@
+<project xmlns:fx="javafx:com.sun.javafx.tools.ant">
+	<!-- Import AntContrib 
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+	<taskdef resource="net/sf/antcontrib/antlib.xml"> 
+		<classpath> 
+			<pathelement location="lib\ant-contrib\ant-contrib-1.0b3.jar" /> 
+		</classpath> 
+	</taskdef> -->
+	
+	<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"      
+						     uri="javafx:com.sun.javafx.tools.ant"
+						     classpath=".:C:\Program Files (x86)\Java\jdk1.8.0_60\lib\ant-javafx.jar"/>  	
+	
+	<target name="deploy" description="Package the application">
+		<echo>DEPLOY ${version}</echo> 
+
+		<echo message="Expand script file" />
+		<delete file="package/windows/Properned.iss" />
+		<copy file="package/windows/Properned.base.iss" tofile="package/windows/Properned.iss">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		
+		<echo message="Expand properties file" />
+		<delete file="package/windows/Properned.properties" />
+		<copy file="package/windows/Properned.base.properties" tofile="package/windows/Properned.properties">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+		
+		
+		<fx:deploy width="800" height="600" outdir="dist"  
+		        outfile="Properned" nativeBundles="installer" verbose="true" >
+		    <fx:application name="Properned"
+		            mainClass="com.properned.application.Properned"/>
+		    <fx:resources>
+		        <fx:fileset dir="../target/" includes="properned-${version}.jar"/>
+		    	<fx:fileset dir="../target/" includes="dependency-jars/*.*"/>
+		    	<fx:fileset dir="package/windows/" includes="Properned.properties"/>
+		    	<fx:fileset dir="package/windows/" includes="linkedlibrairies.txt"/>
+		    </fx:resources>
+			<fx:info title="Properned" vendor="Alexandre NEDJARI" />
+			<fx:preferences menu="true" shortcut="true"/>
+		</fx:deploy> 
+	</target>
+</project>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.properned.application.SystemController">
+   <center>
+      <SplitPane dividerPositions="0.43056768558951963" prefHeight="540.0" prefWidth="1147.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <BorderPane layoutX="38.0" layoutY="40.0" prefHeight="305.0" prefWidth="246.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <top>
+                        <BorderPane prefHeight="82.0" prefWidth="489.0" BorderPane.alignment="CENTER">
+                           <center>
+                              <TextField fx:id="filterText" BorderPane.alignment="CENTER" />
+                           </center>
+                           <right>
+                              <Button fx:id="addButton" disable="true" mnemonicParsing="false" onAction="#addKey" BorderPane.alignment="CENTER" />
+                           </right>
+                           <top>
+                              <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                <items>
+                                  <Button fx:id="openButton" mnemonicParsing="false" onAction="#openPropertiesFile" />
+                                    <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" />
+                                </items>
+                              </ToolBar>
+                           </top>
+                        </BorderPane>
+                     </top>
+                     <center>
+                        <ListView fx:id="messageKeyList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                     </center></BorderPane>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <ListView fx:id="valueList" layoutX="273.0" layoutY="169.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
+        </items>
+      </SplitPane>
+   </center>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="%menu.file">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#openPropertiesFile" text="%menu.file.open" />
+                  <MenuItem mnemonicParsing="false" onAction="#close" text="%menu.file.close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="%menu.help">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#openAboutDialog" text="%menu.help.about" />
+                  <MenuItem mnemonicParsing="false" text="%menu.help.help" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>
