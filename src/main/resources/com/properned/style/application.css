@@ -1,0 +1,16 @@
+.button{
+-fx-border-width: 0.0mm ;
+-fx-background-color:transparent;
+}
+
+#addButton{
+	-fx-graphic: url('icon/add_32.png');
+}
+
+#openButton{
+	-fx-graphic: url('icon/open_32.png');
+}
+
+#saveButton{
+	-fx-graphic: url('icon/save_32.png');
+}
