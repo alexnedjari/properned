@@ -35,6 +35,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.properned.application.preferences.Preferences;
 import com.properned.model.MultiLanguageProperties;
 import com.properned.model.PropertiesFile;
@@ -60,6 +63,8 @@ import com.properned.model.PropertiesFile;
  * @since 28 october 2015
  */
 public class SystemController {
+
+	private Logger logger = LogManager.getLogger(this.getClass());
 
 	private MultiLanguageProperties multiLanguageProperties = new MultiLanguageProperties();
 
@@ -271,6 +276,18 @@ public class SystemController {
 					multiLanguageProperties.setBaseName(properties
 							.getBaseName());
 					multiLanguageProperties.setIsDirty(false);
+
+					Properned.getInstance().getPrimaryStage().getScene()
+							.setOnKeyReleased(new EventHandler<KeyEvent>() {
+								@Override
+								public void handle(KeyEvent event) {
+									if (event.getCode() == KeyCode.S
+											&& event.isControlDown()) {
+										save();
+										event.consume();
+									}
+								}
+							});
 				}
 			});
 			Executors.newSingleThreadExecutor().submit(loadTask);
@@ -334,4 +351,5 @@ public class SystemController {
 						.getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
 		Properned.getInstance().getPrimaryStage().close();
 	}
+
 }

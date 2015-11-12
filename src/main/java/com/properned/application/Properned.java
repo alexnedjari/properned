@@ -10,8 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -77,18 +75,6 @@ public class Properned extends Application {
 				public void handle(WindowEvent event) {
 					Preferences.getInstance().save();
 
-				}
-			});
-
-			final SystemController controller = (SystemController) loader
-					.getController();
-			root.setOnKeyReleased(new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent event) {
-					if (event.getCode() == KeyCode.S && event.isControlDown()) {
-						controller.save();
-						event.consume();
-					}
 				}
 			});
 
