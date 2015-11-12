@@ -352,4 +352,8 @@ public class SystemController {
 		Properned.getInstance().getPrimaryStage().close();
 	}
 
+	public MultiLanguageProperties getMultiLanguageProperties() {
+		return multiLanguageProperties;
+	}
+
 }

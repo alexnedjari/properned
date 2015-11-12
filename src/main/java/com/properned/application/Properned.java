@@ -1,6 +1,7 @@
 package com.properned.application;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -9,6 +10,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -43,6 +46,7 @@ import com.properned.application.preferences.PropernedProperties;
 public class Properned extends Application {
 
 	private Stage primaryStage;
+	private SystemController controller;
 	private static Properned instance;
 
 	private Logger logger = LogManager.getLogger(this.getClass());
@@ -50,7 +54,7 @@ public class Properned extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			logger.info("Lancement de "
+			logger.info("Launching "
 					+ PropernedProperties.getInstance()
 							.getApplicationPresentation());
 
@@ -73,10 +77,45 @@ public class Properned extends Application {
 
 				@Override
 				public void handle(WindowEvent event) {
+					logger.info("Properned close required");
+					if (controller.getMultiLanguageProperties().getIsDirty()) {
+						Alert alert = new Alert(AlertType.CONFIRMATION);
+						alert.setTitle(MessageReader.getInstance().getMessage(
+								"popup.confirmation.warning"));
+						alert.setHeaderText(MessageReader.getInstance()
+								.getMessage("popup.confirmation.close.title"));
+						alert.setContentText(MessageReader.getInstance()
+								.getMessage("popup.confirmation.close.body"));
+
+						ButtonType buttonTypeYes = new ButtonType(MessageReader
+								.getInstance().getMessage("yes"));
+						ButtonType buttonTypeNo = new ButtonType(MessageReader
+								.getInstance().getMessage("no"));
+						ButtonType buttonTypeCancel = new ButtonType("cancel",
+								ButtonData.CANCEL_CLOSE);
+						alert.getButtonTypes().setAll(buttonTypeYes,
+								buttonTypeNo, buttonTypeCancel);
+
+						Optional<ButtonType> result = alert.showAndWait();
+						if (result.get() == buttonTypeYes) {
+							logger.info("the user want to save current files");
+							controller.save();
+						} else if (result.get() == buttonTypeNo) {
+							// Nothing to do here
+							logger.info("the user doesn't want to save current files");
+						} else {
+							logger.info("Properned close cancelled");
+							// The software must not be closed
+							event.consume();
+							return;
+						}
+					}
 					Preferences.getInstance().save();
 
 				}
 			});
+
+			controller = loader.getController();
 
 			primaryStage.show();
 		} catch (IOException e) {
