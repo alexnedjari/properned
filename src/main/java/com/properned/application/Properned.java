@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.properned.application.preferences.Preferences;
 import com.properned.application.preferences.PropernedProperties;
+import com.properned.model.MultiLanguageProperties;
 
 /**
  * Properned is a software that can be used to edit java properties files 2015
@@ -58,6 +59,7 @@ public class Properned extends Application {
 					+ PropernedProperties.getInstance()
 							.getApplicationPresentation());
 
+			Platform.setImplicitExit(false);
 			instance = this;
 			Properned.initializePreference();
 			this.primaryStage = primaryStage;
@@ -78,7 +80,7 @@ public class Properned extends Application {
 				@Override
 				public void handle(WindowEvent event) {
 					logger.info("Properned close required");
-					if (controller.getMultiLanguageProperties().getIsDirty()) {
+					if (MultiLanguageProperties.getInstance().getIsDirty()) {
 						Alert alert = new Alert(AlertType.CONFIRMATION);
 						alert.setTitle(MessageReader.getInstance().getMessage(
 								"popup.confirmation.warning"));
@@ -111,6 +113,8 @@ public class Properned extends Application {
 						}
 					}
 					Preferences.getInstance().save();
+					Platform.exit();
+					System.exit(0);
 
 				}
 			});
