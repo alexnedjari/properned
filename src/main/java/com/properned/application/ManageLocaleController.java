@@ -1,12 +1,14 @@
 package com.properned.application;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -45,6 +47,8 @@ public class ManageLocaleController {
 	private MultiLanguageProperties multiLanguageProperties = MultiLanguageProperties
 			.getInstance();
 
+	private ObservableList<Locale> list = FXCollections.observableArrayList();
+
 	@FXML
 	private ListView<Locale> localeList;
 
@@ -61,20 +65,36 @@ public class ManageLocaleController {
 			// There is a language code and a country code
 			String[] split = text.split("\\_");
 			Locale locale = new Locale(split[0], split[1]);
-			localeList.getItems().add(locale);
+			list.add(locale);
 		} else {
 			// there is only a language code
 			Locale locale = new Locale(text);
-			localeList.getItems().add(locale);
+			list.add(locale);
 		}
 
 	}
 
 	public void initialize() {
-		ObservableList<Locale> list = FXCollections
-				.observableArrayList(multiLanguageProperties
-						.getMapPropertiesByLocale().keySet());
-		localeList.setItems(list);
+		initializeList();
+	}
+
+	public void initializeList() {
+		list = FXCollections.observableArrayList(multiLanguageProperties
+				.getMapPropertiesByLocale().keySet());
+
+		SortedList<Locale> sortedList = new SortedList<>(list,
+				new Comparator<Locale>() {
+					@Override
+					public int compare(Locale o1, Locale o2) {
+						return o1.toString().compareTo(o2.toString());
+					}
+				});
+
+		localeList.setItems(sortedList);
+
+		localeList.setCellFactory(c -> new LocaleListCell(
+				multiLanguageProperties, this));
+
 		list.addListener(new ListChangeListener<Locale>() {
 			@Override
 			public void onChanged(Change<? extends Locale> c) {
@@ -98,15 +118,9 @@ public class ManageLocaleController {
 							}
 						}
 
-					} else if (c.wasRemoved()) {
-						List<? extends Locale> removed = c.getRemoved();
-						for (Locale locale : removed) {
-							logger.info("Remove locale " + locale.toString());
-						}
 					}
 				}
 			}
 		});
-
 	}
 }

@@ -202,8 +202,8 @@ public class MultiLanguageProperties {
 		init();
 
 		BufferedInputStream inStream = null;
-		try {
-			for (PropertiesFile file : fileList) {
+		for (PropertiesFile file : fileList) {
+			try {
 				if (!file.exists()) {
 					throw new IOException("Missing file "
 							+ file.getAbsolutePath());
@@ -213,11 +213,9 @@ public class MultiLanguageProperties {
 				properties.load(inStream);
 
 				addProperties(properties, file.getLocale(), file);
+			} finally {
+				IOUtils.closeQuietly(inStream);
 			}
-
-		} finally {
-			IOUtils.closeQuietly(inStream);
-
 		}
 	}
 
@@ -258,5 +256,17 @@ public class MultiLanguageProperties {
 
 	private void getPropertiesFilesPath() {
 		mapPropertiesFileByLocale.values().iterator().next();
+	}
+
+	public void deleteLocale(Locale locale) {
+		logger.info("Remove locale " + locale.toString());
+
+		PropertiesFile propertiesFile = mapPropertiesFileByLocale.get(locale);
+		if (propertiesFile != null) {
+			propertiesFile.delete();
+		}
+
+		mapPropertiesByLocale.remove(locale);
+		mapPropertiesFileByLocale.remove(locale);
 	}
 }
