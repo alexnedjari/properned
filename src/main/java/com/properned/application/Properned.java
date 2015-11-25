@@ -1,7 +1,6 @@
 package com.properned.application;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -13,6 +12,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -75,38 +76,15 @@ public class Properned extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.getIcons().add(
 					new Image("/com/properned/style/icon/icon_16.png"));
+			controller = loader.getController();
 			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
 				@Override
 				public void handle(WindowEvent event) {
 					logger.info("Properned close required");
 					if (MultiLanguageProperties.getInstance().getIsDirty()) {
-						Alert alert = new Alert(AlertType.CONFIRMATION);
-						alert.setTitle(MessageReader.getInstance().getMessage(
-								"popup.confirmation.warning"));
-						alert.setHeaderText(MessageReader.getInstance()
-								.getMessage("popup.confirmation.close.title"));
-						alert.setContentText(MessageReader.getInstance()
-								.getMessage("popup.confirmation.close.body"));
-
-						ButtonType buttonTypeYes = new ButtonType(MessageReader
-								.getInstance().getMessage("yes"));
-						ButtonType buttonTypeNo = new ButtonType(MessageReader
-								.getInstance().getMessage("no"));
-						ButtonType buttonTypeCancel = new ButtonType("cancel",
-								ButtonData.CANCEL_CLOSE);
-						alert.getButtonTypes().setAll(buttonTypeYes,
-								buttonTypeNo, buttonTypeCancel);
-
-						Optional<ButtonType> result = alert.showAndWait();
-						if (result.get() == buttonTypeYes) {
-							logger.info("the user want to save current files");
-							controller.save();
-						} else if (result.get() == buttonTypeNo) {
-							// Nothing to do here
-							logger.info("the user doesn't want to save current files");
-						} else {
-							logger.info("Properned close cancelled");
+						ButtonType result = controller.askForSave();
+						if (result.getButtonData() == ButtonData.CANCEL_CLOSE) {
 							// The software must not be closed
 							event.consume();
 							return;
@@ -117,9 +95,30 @@ public class Properned extends Application {
 					System.exit(0);
 
 				}
+
 			});
 
-			controller = loader.getController();
+			scene.setOnDragOver(new EventHandler<DragEvent>() {
+				@Override
+				public void handle(DragEvent event) {
+					System.out.println("dragover");
+					if (event.getDragboard().hasFiles()) {
+						event.acceptTransferModes(TransferMode.ANY);
+					}
+
+					event.consume();
+
+				}
+			});
+
+			scene.setOnDragDropped(new EventHandler<DragEvent>() {
+				@Override
+				public void handle(DragEvent event) {
+					controller.loadFileList(event.getDragboard().getFiles()
+							.get(0));
+
+				}
+			});
 
 			primaryStage.show();
 		} catch (IOException e) {

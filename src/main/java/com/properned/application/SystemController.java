@@ -7,11 +7,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,7 +27,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -319,48 +325,65 @@ public class SystemController {
 		}
 	}
 
-	private void loadFileList(File selectedFile) {
-		Preferences.getInstance().setLastPathUsed(
-				selectedFile.getAbsolutePath());
-		String fileName = selectedFile.getName();
-		String baseNameTemp = fileName.substring(0, fileName.lastIndexOf("."));
+	public void loadFileList(File selectedFile) {
+		Platform.runLater(new Runnable() {
 
-		if (fileName.contains("_")) {
-			baseNameTemp = fileName.substring(0, fileName.indexOf("_"));
-		}
-		final String baseName = baseNameTemp;
+			@Override
+			public void run() {
 
-		List<PropertiesFile> fileList = Arrays
-				.asList(selectedFile.getParentFile().listFiles(
-						new FileFilter() {
-							@Override
-							public boolean accept(File pathname) {
-								return pathname.isFile()
-										&& pathname.getName().startsWith(
-												baseName)
-										&& pathname.getName().endsWith(
-												".properties");
-							}
-						})).stream().map(new Function<File, PropertiesFile>() {
-					@Override
-					public PropertiesFile apply(File t) {
-						String language = "";
-						if (t.getName().contains("_")) {
-							language = t.getName().substring(
-									t.getName().indexOf("_") + 1,
-									t.getName().lastIndexOf("."));
-						}
-						return new PropertiesFile(t.getAbsolutePath(),
-								baseName, new Locale(language));
+				if (MultiLanguageProperties.getInstance().getIsDirty()) {
+					ButtonType result = askForSave();
+					if (result.getButtonData() == ButtonData.CANCEL_CLOSE) {
+						// The file must not be loaded
+						return;
 					}
-				}).collect(Collectors.<PropertiesFile> toList());
+				}
+				Preferences.getInstance().setLastPathUsed(
+						selectedFile.getAbsolutePath());
+				String fileName = selectedFile.getName();
+				String baseNameTemp = fileName.substring(0,
+						fileName.lastIndexOf("."));
 
-		try {
-			multiLanguageProperties.loadFileList(baseName, fileList);
-		} catch (IOException e) {
-			Properned.getInstance().showError(
-					MessageReader.getInstance().getMessage("error.load"), e);
-		}
+				if (fileName.contains("_")) {
+					baseNameTemp = fileName.substring(0, fileName.indexOf("_"));
+				}
+				final String baseName = baseNameTemp;
+
+				List<PropertiesFile> fileList = Arrays
+						.asList(selectedFile.getParentFile().listFiles(
+								new FileFilter() {
+									@Override
+									public boolean accept(File pathname) {
+										return pathname.isFile()
+												&& pathname.getName()
+														.startsWith(baseName)
+												&& pathname.getName().endsWith(
+														".properties");
+									}
+								})).stream()
+						.map(new Function<File, PropertiesFile>() {
+							@Override
+							public PropertiesFile apply(File t) {
+								String language = "";
+								if (t.getName().contains("_")) {
+									language = t.getName().substring(
+											t.getName().indexOf("_") + 1,
+											t.getName().lastIndexOf("."));
+								}
+								return new PropertiesFile(t.getAbsolutePath(),
+										baseName, new Locale(language));
+							}
+						}).collect(Collectors.<PropertiesFile> toList());
+
+				try {
+					multiLanguageProperties.loadFileList(baseName, fileList);
+				} catch (IOException e) {
+					Properned.getInstance().showError(
+							MessageReader.getInstance()
+									.getMessage("error.load"), e);
+				}
+			}
+		});
 	}
 
 	@FXML
@@ -373,5 +396,38 @@ public class SystemController {
 				.handle(new WindowEvent(Properned.getInstance()
 						.getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
 		Properned.getInstance().getPrimaryStage().close();
+	}
+
+	public ButtonType askForSave() {
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(MessageReader.getInstance().getMessage(
+				"popup.confirmation.warning"));
+		alert.setHeaderText(MessageReader.getInstance().getMessage(
+				"popup.confirmation.close.title"));
+		alert.setContentText(MessageReader.getInstance().getMessage(
+				"popup.confirmation.close.body"));
+
+		ButtonType buttonTypeYes = new ButtonType(MessageReader.getInstance()
+				.getMessage("yes"));
+		ButtonType buttonTypeNo = new ButtonType(MessageReader.getInstance()
+				.getMessage("no"));
+		ButtonType buttonTypeCancel = new ButtonType("cancel",
+				ButtonData.CANCEL_CLOSE);
+		alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo,
+				buttonTypeCancel);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == buttonTypeYes) {
+			logger.info("the user want to save current files");
+			this.save();
+		} else if (result.get() == buttonTypeNo) {
+			// Nothing to do here
+			logger.info("the user doesn't want to save current files");
+		} else {
+			logger.info("Properned close cancelled");
+		}
+		return result.get();
+
 	}
 }
