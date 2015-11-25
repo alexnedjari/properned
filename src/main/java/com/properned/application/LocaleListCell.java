@@ -68,8 +68,8 @@ public class LocaleListCell extends ListCell<Locale> {
 			setText(localeToString);
 
 			MenuItem deleteMenu = getDeleteMenu(locale);
-
 			this.setContextMenu(new ContextMenu(deleteMenu));
+
 		}
 	}
 
@@ -103,6 +103,12 @@ public class LocaleListCell extends ListCell<Locale> {
 
 			}
 		});
+
+		if (properties.getMapPropertiesByLocale().keySet().size() <= 1) {
+			// We can delete only if there is more than the current locale
+			deleteMenu.setDisable(true);
+		}
+
 		return deleteMenu;
 	}
 }
