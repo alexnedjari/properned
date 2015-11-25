@@ -7,10 +7,18 @@
 	-fx-graphic: url('icon/add_32.png');
 }
 
+#addLocaleButton{
+	-fx-graphic: url('icon/add_32.png');
+}
+
 #openButton{
 	-fx-graphic: url('icon/open_32.png');
 }
 
 #saveButton{
 	-fx-graphic: url('icon/save_32.png');
+}
+
+#localeButton{
+	-fx-graphic: url('icon/locale_32.png');
 }

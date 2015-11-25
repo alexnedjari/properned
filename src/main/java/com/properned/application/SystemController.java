@@ -31,6 +31,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -66,7 +67,8 @@ public class SystemController {
 
 	private Logger logger = LogManager.getLogger(this.getClass());
 
-	private MultiLanguageProperties multiLanguageProperties = new MultiLanguageProperties();
+	private MultiLanguageProperties multiLanguageProperties = MultiLanguageProperties
+			.getInstance();
 
 	@FXML
 	private ListView<String> messageKeyList;
@@ -83,9 +85,15 @@ public class SystemController {
 	@FXML
 	private Button addButton;
 
+	@FXML
+	private Button localeButton;
+
 	public void initialize() {
+		localeButton.disableProperty().bind(
+				multiLanguageProperties.isLoadedProperty().not());
 		saveButton.disableProperty().bind(
-				multiLanguageProperties.isDirtyProperty().not());
+				multiLanguageProperties.isDirtyProperty().not()
+						.or(multiLanguageProperties.isLoadedProperty().not()));
 		Stage primaryStage = Properned.getInstance().getPrimaryStage();
 		primaryStage
 				.titleProperty()
@@ -239,6 +247,37 @@ public class SystemController {
 		}
 	}
 
+	@FXML
+	public void openLocaleDialog() {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource(
+				"/com/properned/gui/localeFrame.fxml"));
+		loader.setResources(MessageReader.getInstance().getBundle());
+
+		try {
+			loader.load();
+
+			Parent root = loader.getRoot();
+
+			Stage modalDialog = new Stage(StageStyle.UNIFIED);
+			modalDialog.initModality(Modality.APPLICATION_MODAL);
+			modalDialog.initOwner(Properned.getInstance().getPrimaryStage());
+			modalDialog.setTitle(MessageReader.getInstance().getMessage(
+					"manageLocale.title"));
+			modalDialog.setResizable(true);
+
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add("/com/properned/style/application.css");
+
+			modalDialog.setScene(scene);
+
+			modalDialog.showAndWait();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public void openPropertiesFile() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(MessageReader.getInstance().getMessage(
@@ -252,31 +291,17 @@ public class SystemController {
 		File selectedFile = fileChooser.showOpenDialog(Properned.getInstance()
 				.getPrimaryStage().getScene().getWindow());
 		if (selectedFile != null) {
-			Task<MultiLanguageProperties> loadTask = new Task<MultiLanguageProperties>() {
+			Task<Void> loadTask = new Task<Void>() {
 				@Override
-				protected MultiLanguageProperties call() throws Exception {
-					return loadFileList(selectedFile);
+				protected Void call() throws Exception {
+					loadFileList(selectedFile);
+					return null;
 				}
 			};
 			loadTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 				@Override
 				public void handle(WorkerStateEvent event) {
-					MultiLanguageProperties properties = loadTask.getValue();
-
-					multiLanguageProperties.getListMessageKey().clear();
-					multiLanguageProperties.getListMessageKey().addAll(
-							properties.getListMessageKey());
-
-					multiLanguageProperties.setMapPropertiesByLocale(properties
-							.getMapPropertiesByLocale());
-					multiLanguageProperties
-							.setMapPropertiesFileByLocale(properties
-									.getMapPropertiesFileByLocale());
-					multiLanguageProperties.setBaseName(properties
-							.getBaseName());
-					multiLanguageProperties.setIsDirty(false);
-
 					Properned.getInstance().getPrimaryStage().getScene()
 							.setOnKeyReleased(new EventHandler<KeyEvent>() {
 								@Override
@@ -294,7 +319,7 @@ public class SystemController {
 		}
 	}
 
-	private MultiLanguageProperties loadFileList(File selectedFile) {
+	private void loadFileList(File selectedFile) {
 		Preferences.getInstance().setLastPathUsed(
 				selectedFile.getAbsolutePath());
 		String fileName = selectedFile.getName();
@@ -331,13 +356,11 @@ public class SystemController {
 				}).collect(Collectors.<PropertiesFile> toList());
 
 		try {
-			return MultiLanguageProperties.loadFileList(baseName, fileList);
+			multiLanguageProperties.loadFileList(baseName, fileList);
 		} catch (IOException e) {
 			Properned.getInstance().showError(
 					MessageReader.getInstance().getMessage("error.load"), e);
 		}
-		// no load, we return current object
-		return multiLanguageProperties;
 	}
 
 	@FXML
@@ -351,9 +374,4 @@ public class SystemController {
 						.getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
 		Properned.getInstance().getPrimaryStage().close();
 	}
-
-	public MultiLanguageProperties getMultiLanguageProperties() {
-		return multiLanguageProperties;
-	}
-
 }

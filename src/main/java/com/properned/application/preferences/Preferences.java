@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -306,11 +307,14 @@ public final class Preferences {
 	 */
 	public void save() {
 		this.logger.info("Save preferences");
+		FileOutputStream stream = null;
 		try {
-			this.properties.storeToXML(
-					new FileOutputStream(this.propertieFile), "", "UTF-8");
+			stream = new FileOutputStream(this.propertieFile);
+			this.properties.storeToXML(stream, "", "UTF-8");
 		} catch (IOException e) {
 			this.logger.error("Preferences cannot be saved", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
 		}
 	}
 
