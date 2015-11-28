@@ -22,6 +22,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +34,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -43,10 +46,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.properned.application.preferences.Preferences;
+import com.properned.application.preferences.recentfile.RecentFile;
 import com.properned.model.MultiLanguageProperties;
 import com.properned.model.PropertiesFile;
 
@@ -76,6 +81,9 @@ public class SystemController {
 
 	private MultiLanguageProperties multiLanguageProperties = MultiLanguageProperties
 			.getInstance();
+
+	@FXML
+	private Menu recentFileMenu;
 
 	@FXML
 	private ListView<String> messageKeyList;
@@ -325,9 +333,10 @@ public class SystemController {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(MessageReader.getInstance().getMessage(
 				"window.openFile.title"));
-		File lastSelectedFile = new File(Preferences.getInstance()
-				.getLastPathUsed());
-		if (lastSelectedFile != null && lastSelectedFile.exists()
+		String lastPathUsed = Preferences.getInstance().getLastPathUsed();
+		File lastSelectedFile = new File(lastPathUsed);
+		if (StringUtils.isNotEmpty(lastPathUsed) && lastSelectedFile != null
+				&& lastSelectedFile.getParentFile() != null
 				&& lastSelectedFile.getParentFile().exists()) {
 			fileChooser.setInitialDirectory(lastSelectedFile.getParentFile());
 		}
@@ -356,6 +365,8 @@ public class SystemController {
 									}
 								}
 							});
+					Preferences.getInstance().addFileToRecentFileList(
+							selectedFile.getAbsolutePath());
 				}
 			});
 			Executors.newSingleThreadExecutor().submit(loadTask);
@@ -466,5 +477,28 @@ public class SystemController {
 		}
 		return result.get();
 
+	}
+
+	public void populateRecentFileMenu() {
+		logger.info("Loading recent files");
+
+		recentFileMenu.getItems().clear();
+		List<RecentFile> recentFileList = Preferences.getInstance()
+				.getRecentFileList();
+		for (final RecentFile recentFile : recentFileList) {
+			if (recentFile.getFile().exists()) {
+				MenuItem menuItemRecentFile = new MenuItem(recentFile.getFile()
+						.getAbsolutePath());
+				menuItemRecentFile.setMnemonicParsing(false);
+				menuItemRecentFile.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						loadFileList(recentFile.getFile());
+					}
+				});
+				recentFileMenu.getItems().add(menuItemRecentFile);
+			}
+		}
 	}
 }
