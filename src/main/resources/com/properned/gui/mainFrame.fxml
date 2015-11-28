@@ -62,7 +62,7 @@
           <Menu mnemonicParsing="false" text="%menu.help">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#openAboutDialog" text="%menu.help.about" />
-                  <MenuItem mnemonicParsing="false" text="%menu.help.help" />
+                  <MenuItem mnemonicParsing="false" onAction="#openHelpDialog" text="%menu.help.help" />
             </items>
           </Menu>
         </menus>

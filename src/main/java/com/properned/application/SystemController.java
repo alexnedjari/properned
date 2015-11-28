@@ -34,6 +34,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
@@ -254,6 +255,40 @@ public class SystemController {
 	}
 
 	@FXML
+	public void openHelpDialog() {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource(
+				"/com/properned/gui/helpFrame.fxml"));
+		loader.setResources(MessageReader.getInstance().getBundle());
+
+		try {
+			loader.load();
+
+			Parent root = loader.getRoot();
+
+			Stage modalDialog = new Stage();
+			// modalDialog.initModality(Modality.APPLICATION_MODAL);
+			// modalDialog.initOwner(Properned.getInstance().getPrimaryStage());
+			modalDialog.setTitle(MessageReader.getInstance().getMessage(
+					"menu.help.help"));
+			modalDialog.setResizable(true);
+			modalDialog.getIcons().add(
+					new Image("/com/properned/style/icon/icon_16.png"));
+
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add("/com/properned/style/application.css");
+
+			modalDialog.setScene(scene);
+
+			// modalDialog.showAndWait();
+			modalDialog.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
 	public void openLocaleDialog() {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource(
@@ -271,6 +306,8 @@ public class SystemController {
 			modalDialog.setTitle(MessageReader.getInstance().getMessage(
 					"manageLocale.title"));
 			modalDialog.setResizable(true);
+			modalDialog.getIcons().add(
+					new Image("/com/properned/style/icon/icon_16.png"));
 
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add("/com/properned/style/application.css");
