@@ -1,5 +1,6 @@
 package com.properned.application;
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Application;
@@ -101,7 +102,6 @@ public class Properned extends Application {
 			scene.setOnDragOver(new EventHandler<DragEvent>() {
 				@Override
 				public void handle(DragEvent event) {
-					System.out.println("dragover");
 					if (event.getDragboard().hasFiles()) {
 						event.acceptTransferModes(TransferMode.ANY);
 					}
@@ -114,8 +114,9 @@ public class Properned extends Application {
 			scene.setOnDragDropped(new EventHandler<DragEvent>() {
 				@Override
 				public void handle(DragEvent event) {
-					controller.loadFileList(event.getDragboard().getFiles()
-							.get(0));
+					File selectedFile = event.getDragboard().getFiles().get(0);
+					logger.info("Drop a file on properned : " + selectedFile);
+					controller.loadFileList(selectedFile);
 
 				}
 			});

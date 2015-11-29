@@ -104,6 +104,7 @@ public class SystemController {
 	private Button localeButton;
 
 	public void initialize() {
+		logger.info("Initialize System controller");
 		localeButton.disableProperty().bind(
 				multiLanguageProperties.isLoadedProperty().not());
 		saveButton.disableProperty().bind(
@@ -168,7 +169,7 @@ public class SystemController {
 			@Override
 			public void changed(ObservableValue<? extends String> observable,
 					String oldValue, String newValue) {
-				System.out.println("Changement de sélection : " + newValue);
+				logger.info("Message key selection changed : " + newValue);
 				valueList.setItems(FXCollections.observableArrayList());
 
 				valueList.setItems(FXCollections
@@ -199,10 +200,8 @@ public class SystemController {
 	}
 
 	private boolean isKeyCanBeAdded(String newValue) {
-		return !(newValue == null
-				|| newValue.equals("")
-				|| multiLanguageProperties.getMapPropertiesFileByLocale()
-						.keySet().isEmpty() || multiLanguageProperties
+		return !(StringUtils.isEmpty(newValue)
+				|| !multiLanguageProperties.getIsLoaded() || multiLanguageProperties
 				.getListMessageKey().contains(newValue));
 	}
 
@@ -210,6 +209,7 @@ public class SystemController {
 	public void addKey() {
 		String newMessageKey = filterText.getText();
 		if (isKeyCanBeAdded(newMessageKey)) {
+			logger.info("Add the messagekey" + newMessageKey);
 			multiLanguageProperties.getListMessageKey().add(newMessageKey);
 			messageKeyList.getSelectionModel().select(newMessageKey);
 		}
@@ -218,8 +218,8 @@ public class SystemController {
 	@FXML
 	public void save() {
 		// Save only if a file is loaded
-		if (!multiLanguageProperties.getMapPropertiesFileByLocale().keySet()
-				.isEmpty()) {
+		if (multiLanguageProperties.getIsLoaded()) {
+			logger.info("Save the multi language properties");
 			try {
 				multiLanguageProperties.save();
 			} catch (IOException e) {
@@ -233,6 +233,7 @@ public class SystemController {
 
 	@FXML
 	public void openAboutDialog() {
+		logger.info("Open the about dialog");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource(
 				"/com/properned/gui/aboutFrame.fxml"));
@@ -244,7 +245,6 @@ public class SystemController {
 			Parent root = loader.getRoot();
 
 			Stage modalDialog = new Stage(StageStyle.UTILITY);
-			// modalDialog.initModality(Modality.APPLICATION_MODAL);
 			modalDialog.initOwner(Properned.getInstance().getPrimaryStage());
 			modalDialog.setTitle(MessageReader.getInstance().getMessage(
 					"menu.help.about"));
@@ -257,13 +257,15 @@ public class SystemController {
 
 			modalDialog.showAndWait();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage("error.openFrame"),
+					e);
 		}
 	}
 
 	@FXML
 	public void openHelpDialog() {
+		logger.info("Open the help dialog");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource(
 				"/com/properned/gui/helpFrame.fxml"));
@@ -271,12 +273,8 @@ public class SystemController {
 
 		try {
 			loader.load();
-
 			Parent root = loader.getRoot();
-
 			Stage modalDialog = new Stage();
-			// modalDialog.initModality(Modality.APPLICATION_MODAL);
-			// modalDialog.initOwner(Properned.getInstance().getPrimaryStage());
 			modalDialog.setTitle(MessageReader.getInstance().getMessage(
 					"menu.help.help"));
 			modalDialog.setResizable(true);
@@ -285,19 +283,19 @@ public class SystemController {
 
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add("/com/properned/style/application.css");
-
 			modalDialog.setScene(scene);
-
-			// modalDialog.showAndWait();
 			modalDialog.show();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage("error.openFrame"),
+					e);
 		}
 	}
 
 	@FXML
 	public void openLocaleDialog() {
+		logger.info("Open the locale dialog");
+
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource(
 				"/com/properned/gui/localeFrame.fxml"));
@@ -324,12 +322,14 @@ public class SystemController {
 
 			modalDialog.showAndWait();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage("error.openFrame"),
+					e);
 		}
 	}
 
 	public void openPropertiesFile() {
+		logger.info("Open the 'Open file' dialog");
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(MessageReader.getInstance().getMessage(
 				"window.openFile.title"));
@@ -343,6 +343,7 @@ public class SystemController {
 		File selectedFile = fileChooser.showOpenDialog(Properned.getInstance()
 				.getPrimaryStage().getScene().getWindow());
 		if (selectedFile != null) {
+			logger.info("Selected file : " + selectedFile.getAbsolutePath());
 			Task<Void> loadTask = new Task<Void>() {
 				@Override
 				protected Void call() throws Exception {
@@ -354,12 +355,14 @@ public class SystemController {
 
 				@Override
 				public void handle(WorkerStateEvent event) {
+					logger.info("load successfull");
 					Properned.getInstance().getPrimaryStage().getScene()
 							.setOnKeyReleased(new EventHandler<KeyEvent>() {
 								@Override
 								public void handle(KeyEvent event) {
 									if (event.getCode() == KeyCode.S
 											&& event.isControlDown()) {
+										logger.info("CTRL-S detected");
 										save();
 										event.consume();
 									}
@@ -378,6 +381,8 @@ public class SystemController {
 
 			@Override
 			public void run() {
+				logger.info("Load the file list associated to '"
+						+ selectedFile.getAbsolutePath() + "'");
 
 				if (MultiLanguageProperties.getInstance().getIsDirty()) {
 					ButtonType result = askForSave();
@@ -436,7 +441,7 @@ public class SystemController {
 
 	@FXML
 	public void close() {
-		System.out.println("Fermeture par menu");
+		logger.info("closed by menu");
 		Properned
 				.getInstance()
 				.getPrimaryStage()
@@ -447,7 +452,7 @@ public class SystemController {
 	}
 
 	public ButtonType askForSave() {
-
+		logger.info("Save alert open");
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle(MessageReader.getInstance().getMessage(
 				"popup.confirmation.warning"));

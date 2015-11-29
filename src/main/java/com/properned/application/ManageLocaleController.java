@@ -58,6 +58,7 @@ public class ManageLocaleController {
 	public void addLocale(ActionEvent event) {
 		String text = localeTextField.getText();
 		if (StringUtils.isEmpty(text)) {
+			logger.info("Locale text fied is empty, nothing locale added");
 			// nothing to add
 			return;
 		}
@@ -66,10 +67,12 @@ public class ManageLocaleController {
 			String[] split = text.split("\\_");
 			Locale locale = new Locale(split[0], split[1]);
 			list.add(locale);
+			logger.info("Added language/coutry locale '" + locale + "'");
 		} else {
 			// there is only a language code
 			Locale locale = new Locale(text);
 			list.add(locale);
+			logger.info("Added language locale '" + locale + "'");
 		}
 
 	}
@@ -79,6 +82,7 @@ public class ManageLocaleController {
 	}
 
 	public void initializeList() {
+		logger.info("Initialize locale list");
 		list = FXCollections.observableArrayList(multiLanguageProperties
 				.getMapPropertiesByLocale().keySet());
 

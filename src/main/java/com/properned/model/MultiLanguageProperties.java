@@ -58,7 +58,6 @@ public class MultiLanguageProperties {
 			.getInstance().getMessage("mainFrame.defaultFileName"));
 	private StringProperty parentDirectoryPath = new SimpleStringProperty();
 
-	// ObservableList<Locale> localeList = FXCollections.observableArrayList();
 	private Map<Locale, Properties> mapPropertiesByLocale = new HashMap<Locale, Properties>();
 	private Map<Locale, PropertiesFile> mapPropertiesFileByLocale = new HashMap<Locale, PropertiesFile>();
 	private ObservableList<String> listMessageKey = FXCollections
@@ -80,9 +79,9 @@ public class MultiLanguageProperties {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
+				logger.info("Initializing the multi language properties instance");
 				isDirty.set(false);
 				isLoaded.set(false);
-				// localeList.clear();
 				mapPropertiesByLocale.clear();
 				mapPropertiesFileByLocale.clear();
 				listMessageKey.clear();
@@ -119,7 +118,8 @@ public class MultiLanguageProperties {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				// localeList.add(locale);
+				logger.info("Add a propertie file for the locale '" + locale
+						+ "'");
 				mapPropertiesByLocale.put(locale, properties);
 				mapPropertiesFileByLocale.put(locale, file);
 				Set<String> stringPropertyNames = properties
@@ -142,6 +142,10 @@ public class MultiLanguageProperties {
 		return listMessageKey;
 	}
 
+	public boolean getIsLoaded() {
+		return isLoaded.get();
+	}
+
 	public boolean getIsDirty() {
 		return isDirty.get();
 	}
@@ -155,6 +159,7 @@ public class MultiLanguageProperties {
 	}
 
 	public void setBaseName(String baseName) {
+		logger.info("new baseName : " + baseName);
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -165,9 +170,12 @@ public class MultiLanguageProperties {
 
 	public void setProperty(String messageKey, String value, Locale locale) {
 		if (StringUtils.isNotEmpty(value)) {
+			logger.info("new property value : " + messageKey + " (" + locale
+					+ ") : " + value);
 			this.getMapPropertiesByLocale().get(locale)
 					.setProperty(messageKey, value);
 		} else {
+			logger.info("remove property : " + messageKey + " (" + locale + ")");
 			this.getMapPropertiesByLocale().get(locale).remove(messageKey);
 		}
 		this.setIsDirty(true);
@@ -175,6 +183,7 @@ public class MultiLanguageProperties {
 	}
 
 	public void save() throws IOException {
+		logger.info("Save the multi language properties instance");
 		Set<Locale> setLocale = mapPropertiesFileByLocale.keySet();
 		for (Locale locale : setLocale) {
 			PropertiesFile propertiesFile = mapPropertiesFileByLocale
@@ -198,11 +207,14 @@ public class MultiLanguageProperties {
 
 	public void loadFileList(String baseName, List<PropertiesFile> fileList)
 			throws IOException {
+		logger.info("load a multi language properties (" + baseName + ") with "
+				+ fileList.size() + " files");
 		// delete current values
 		init();
 
 		BufferedInputStream inStream = null;
 		for (PropertiesFile file : fileList) {
+			logger.info("load the file " + file.getAbsolutePath());
 			try {
 				if (!file.exists()) {
 					throw new IOException("Missing file "
@@ -220,6 +232,7 @@ public class MultiLanguageProperties {
 	}
 
 	public void deleteMessageKey(String messageKey) {
+		logger.info("Delete the message key '" + messageKey + "'");
 		listMessageKey.remove(messageKey);
 		Set<Locale> setLocale = mapPropertiesFileByLocale.keySet();
 		for (Locale locale : setLocale) {
@@ -252,10 +265,6 @@ public class MultiLanguageProperties {
 		}
 		fileName += ".properties";
 		return fileName;
-	}
-
-	private void getPropertiesFilesPath() {
-		mapPropertiesFileByLocale.values().iterator().next();
 	}
 
 	public void deleteLocale(Locale locale) {

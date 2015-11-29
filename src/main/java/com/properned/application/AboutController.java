@@ -48,6 +48,7 @@ public class AboutController {
 	private Logger logger = LogManager.getLogger(this.getClass());
 
 	public void initialize() throws IOException, URISyntaxException {
+		logger.info("Initialize about controller");
 		labelApplication.setText(PropernedProperties.getInstance()
 				.getApplicationPresentation());
 		labelAuthorValue.setText(PropernedProperties.getInstance().getAuthor());
@@ -56,7 +57,9 @@ public class AboutController {
 					"linkedlibrairies.txt"));
 			textAreaLicence.setText(licence);
 		} catch (IOException e) {
-			logger.error("Unable to read licence file", e);
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage(
+							"error.load.licenceFile"), e);
 		}
 	}
 }

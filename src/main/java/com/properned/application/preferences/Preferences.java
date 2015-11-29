@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -86,11 +85,6 @@ public final class Preferences {
 	 * The number of recent file to store
 	 */
 	private int recentFileListSize = 10;
-
-	/**
-	 * list of listeners
-	 */
-	private ArrayList<PreferencesListener> listeners = new ArrayList<PreferencesListener>();
 
 	/**
 	 * The instance
@@ -226,11 +220,6 @@ public final class Preferences {
 				+ recentFileListRepresentation);
 		this.properties.setProperty(Preferences.KEY_RECENT_FILE_LIST,
 				recentFileListRepresentation);
-		for (PreferencesListener listener : this.listeners) {
-			this.logger.info("Notifie listener : " + listener.toString());
-			listener.onPreferenceChange(Preferences.KEY_RECENT_FILE_LIST,
-					this.getRecentFileSet());
-		}
 	}
 
 	/**
@@ -254,11 +243,7 @@ public final class Preferences {
 		this.alwaysOnTop = newAlwaysOnTop;
 		this.properties.setProperty(Preferences.KEY_ALWAYS_ON_TOP,
 				Boolean.toString(this.alwaysOnTop));
-		for (PreferencesListener listener : this.listeners) {
-			this.logger.info("Notifie listener : " + listener.toString());
-			listener.onPreferenceChange(Preferences.KEY_ALWAYS_ON_TOP,
-					Boolean.valueOf(newAlwaysOnTop));
-		}
+
 	}
 
 	/**
@@ -282,24 +267,7 @@ public final class Preferences {
 		this.lastPathUsed = newLastPathUsed;
 		this.properties.setProperty(Preferences.KEY_LAST_PATH_USED,
 				this.lastPathUsed);
-		for (PreferencesListener listener : this.listeners) {
-			this.logger.info("Notifie listener : " + listener.toString());
-			listener.onPreferenceChange(Preferences.KEY_LAST_PATH_USED,
-					Boolean.valueOf(newLastPathUsed));
-		}
-	}
 
-	/**
-	 * Add a listener to the list
-	 * 
-	 * @param listener
-	 *            the listener to add
-	 */
-	public void addListener(PreferencesListener listener) {
-		this.listeners.add(listener);
-		this.logger.info("Ajout d'un listener de préférences : "
-				+ listener.getClass().getSimpleName()
-				+ ". Nombre de listeners : " + this.listeners.size());
 	}
 
 	/**

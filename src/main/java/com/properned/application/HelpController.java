@@ -39,16 +39,16 @@ public class HelpController {
 	private WebView webView;
 
 	public void initialize() {
-
+		logger.info("Initialize help controller");
 		URL url = this.getClass().getResource("/com/properned/help/help.html");
 		String content;
 		try {
 			content = IOUtils.toString(new FileInputStream(url.getFile()));
 			webView.getEngine().loadContent(content);
-			// webView.getEngine().loadContent("bonjour");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage("error.load.help"),
+					e);
 		}
 
 	}
