@@ -1,18 +1,14 @@
 package com.properned.application;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.URL;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.web.WebView;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.properned.application.preferences.PropernedProperties;
 
 /**
  * Properned is a software that can be used to edit java properties files 2015
@@ -34,32 +30,28 @@ import com.properned.application.preferences.PropernedProperties;
  * @author Alexandre NEDJARI
  * @since 28 october 2015
  */
-public class AboutController {
-
-	@FXML
-	private TextArea textAreaLicence;
-
-	@FXML
-	private Label labelApplication;
-
-	@FXML
-	private Label labelAuthorValue;
+public class HelpController {
 
 	private Logger logger = LogManager.getLogger(this.getClass());
 
-	public void initialize() throws IOException, URISyntaxException {
-		logger.info("Initialize about controller");
-		labelApplication.setText(PropernedProperties.getInstance()
-				.getApplicationPresentation());
-		labelAuthorValue.setText(PropernedProperties.getInstance().getAuthor());
+	@FXML
+	private WebView webView;
+
+	public void initialize() {
+		logger.info("Initialize help controller");
+		URL url = this.getClass().getResource("/com/properned/help/help.html");
+		String content;
 		try {
-			String licence = FileUtils.readFileToString(new File(
-					"linkedlibrairies.txt"));
-			textAreaLicence.setText(licence);
+			// content = IOUtils.toString(new FileInputStream(url.getFile()));
+			content = IOUtils.toString(this.getClass().getResourceAsStream(
+					"/com/properned/help/help.html"));
+			webView.getEngine().loadContent(content);
 		} catch (IOException e) {
 			Properned.getInstance().showError(
-					MessageReader.getInstance().getMessage(
-							"error.load.licenceFile"), e);
+					MessageReader.getInstance().getMessage("error.load.help"),
+					e);
 		}
+
 	}
+
 }

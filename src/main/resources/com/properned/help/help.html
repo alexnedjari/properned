@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Aide</title>
+		<style type="text/css">
+		  .title {
+				font-size: 22px;
+				font-weight : bold;
+				margin-top : 30px;
+				font-family: Arial;
+			}
+			.content {
+				font-size: 18px;
+				margin-left : 30px;
+				font-family: Arial;
+			}
+		</style>
+	</head>
+	<body>
+		
+		
+		<div class="title">Présentation</div>
+		<p class="content">Bienvenue dans properned</p>
+		<p class="content">Properned est un éditeur de fichier de propriétés java. Il permet de lire et de sauvegarder des fichiers de propriété au format ISO 8859-1.</p>
+		
+		<div class="title">Ouvrir un fichier</div>
+		<p class="content">Il est possible d'ouvrir un fichier de plusieurs manières, en utilisant le menu "Fichier/Ouvrir", le bouton "Ouvrir un fichier" de la barre outil, ou en faisant glisser un fichier de propriétés directement dans le logiciel.
+		<p class="content">A l'ouverture d'un fichier, Properned va rechercher dans le répertoire courant tous les fichiers ayant la même base de nom (même nom de fichier, après avoir supprimé le code langue / pays).</p>
+		<p class="content">Si un répertoire contient un fichier messages.properties, messages_de.properties et messages_fr_CA.properties, il peut ouvrir indifféremment un des trois, le résultat sera le même</p>
+		<p class="content">L'utilisateur peut alors manipuler tous ces fichiers en même temps</p>
+		
+		<div class="title">Manipuler les clés</div>
+		<p class="content">Pour rechercher une clé, l'utilisateur peut utiliser le champ texte situé au dessus de la liste des clés. Un filtre sera appliqué au fur et à mesure de sa saisie</p>
+		<p class="content">Pour ajouter une clé, il faut saisir le nom de la nouvelle clé dans ce même champ. Cliquer sur le bouton "+" situé à côté créera la nouvelle clé et l'ajoutera à la liste</p>
+		<p class="content">Pour modifier une clé, il faut la sélectionner dans la liste des clés. Les différentes locales disponibles s'affichent alors dans la zone de droite, l'utilisateur peut alors modifier les différentes valeurs pour cette clé</p>
+		<p class="content">Pour supprimer une clé, il faut faire un clic droit sur la clé dans la liste des clés, et sélectionner l'option "Supprimer"</p>
+		
+		<div class="title">Manipuler les locales</div>
+		<p class="content">L'utilisateur a la possibilité d'ajouter / supprimer des locales. Une fenêtre est dédiée à ce besoin, pour l'ouvrir, il faut cliquer sur le bouton "Locales" de la barre outil</p>
+		<p class="content">Pour ajouter une locale, l'utilisateur doit mettre son nom dans le champ texte de cette fenêtre, et cliquer sur le bouton "+". Un fichier sera créé à ce moment là pour cette nouvelle locale</p>
+		<p class="content">Pour supprimer une locale, l'utilisateur doit faire clic droit sur une des locales, et cliquer sur "Supprimer" dans le menu contextuel. ATTENTION, si l'utilisateur confirme son choix, le fichier associé à cette locale sera supprimé et les valeurs contenues seront définitivement perdues</p>
+	</body>
+</html>

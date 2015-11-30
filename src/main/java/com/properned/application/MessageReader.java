@@ -1,5 +1,6 @@
 package com.properned.application;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -52,7 +53,16 @@ public class MessageReader {
 		return cache.get(locale);
 	}
 
-	public String getMessage(String key) {
-		return getBundle().getString(key);
+	public String getMessage(String key, String... args) {
+		String value = getBundle().getString(key);
+		if (args.length == 0) {
+			return value;
+		}
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(locale);
+
+		value = value.replaceAll("'", "''");
+		formatter.applyPattern(value);
+		return formatter.format(args);
 	}
 }

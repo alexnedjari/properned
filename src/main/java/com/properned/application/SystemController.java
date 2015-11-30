@@ -7,11 +7,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,22 +22,36 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.properned.application.preferences.Preferences;
+import com.properned.application.preferences.recentfile.RecentFile;
 import com.properned.model.MultiLanguageProperties;
 import com.properned.model.PropertiesFile;
 
@@ -61,7 +77,13 @@ import com.properned.model.PropertiesFile;
  */
 public class SystemController {
 
-	private MultiLanguageProperties multiLanguageProperties = new MultiLanguageProperties();
+	private Logger logger = LogManager.getLogger(this.getClass());
+
+	private MultiLanguageProperties multiLanguageProperties = MultiLanguageProperties
+			.getInstance();
+
+	@FXML
+	private Menu recentFileMenu;
 
 	@FXML
 	private ListView<String> messageKeyList;
@@ -78,9 +100,16 @@ public class SystemController {
 	@FXML
 	private Button addButton;
 
+	@FXML
+	private Button localeButton;
+
 	public void initialize() {
+		logger.info("Initialize System controller");
+		localeButton.disableProperty().bind(
+				multiLanguageProperties.isLoadedProperty().not());
 		saveButton.disableProperty().bind(
-				multiLanguageProperties.isDirtyProperty().not());
+				multiLanguageProperties.isDirtyProperty().not()
+						.or(multiLanguageProperties.isLoadedProperty().not()));
 		Stage primaryStage = Properned.getInstance().getPrimaryStage();
 		primaryStage
 				.titleProperty()
@@ -140,7 +169,7 @@ public class SystemController {
 			@Override
 			public void changed(ObservableValue<? extends String> observable,
 					String oldValue, String newValue) {
-				System.out.println("Changement de sélection : " + newValue);
+				logger.info("Message key selection changed : " + newValue);
 				valueList.setItems(FXCollections.observableArrayList());
 
 				valueList.setItems(FXCollections
@@ -171,10 +200,8 @@ public class SystemController {
 	}
 
 	private boolean isKeyCanBeAdded(String newValue) {
-		return !(newValue == null
-				|| newValue.equals("")
-				|| multiLanguageProperties.getMapPropertiesFileByLocale()
-						.keySet().isEmpty() || multiLanguageProperties
+		return !(StringUtils.isEmpty(newValue)
+				|| !multiLanguageProperties.getIsLoaded() || multiLanguageProperties
 				.getListMessageKey().contains(newValue));
 	}
 
@@ -182,6 +209,7 @@ public class SystemController {
 	public void addKey() {
 		String newMessageKey = filterText.getText();
 		if (isKeyCanBeAdded(newMessageKey)) {
+			logger.info("Add the messagekey" + newMessageKey);
 			multiLanguageProperties.getListMessageKey().add(newMessageKey);
 			messageKeyList.getSelectionModel().select(newMessageKey);
 		}
@@ -190,8 +218,8 @@ public class SystemController {
 	@FXML
 	public void save() {
 		// Save only if a file is loaded
-		if (!multiLanguageProperties.getMapPropertiesFileByLocale().keySet()
-				.isEmpty()) {
+		if (multiLanguageProperties.getIsLoaded()) {
+			logger.info("Save the multi language properties");
 			try {
 				multiLanguageProperties.save();
 			} catch (IOException e) {
@@ -205,6 +233,7 @@ public class SystemController {
 
 	@FXML
 	public void openAboutDialog() {
+		logger.info("Open the about dialog");
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource(
 				"/com/properned/gui/aboutFrame.fxml"));
@@ -216,7 +245,6 @@ public class SystemController {
 			Parent root = loader.getRoot();
 
 			Stage modalDialog = new Stage(StageStyle.UTILITY);
-			// modalDialog.initModality(Modality.APPLICATION_MODAL);
 			modalDialog.initOwner(Properned.getInstance().getPrimaryStage());
 			modalDialog.setTitle(MessageReader.getInstance().getMessage(
 					"menu.help.about"));
@@ -229,103 +257,191 @@ public class SystemController {
 
 			modalDialog.showAndWait();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage("error.openFrame"),
+					e);
+		}
+	}
+
+	@FXML
+	public void openHelpDialog() {
+		logger.info("Open the help dialog");
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource(
+				"/com/properned/gui/helpFrame.fxml"));
+		loader.setResources(MessageReader.getInstance().getBundle());
+
+		try {
+			loader.load();
+			Parent root = loader.getRoot();
+			Stage modalDialog = new Stage();
+			modalDialog.setTitle(MessageReader.getInstance().getMessage(
+					"menu.help.help"));
+			modalDialog.setResizable(true);
+			modalDialog.getIcons().add(
+					new Image("/com/properned/style/icon/icon_16.png"));
+
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add("/com/properned/style/application.css");
+			modalDialog.setScene(scene);
+			modalDialog.show();
+		} catch (IOException e) {
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage("error.openFrame"),
+					e);
+		}
+	}
+
+	@FXML
+	public void openLocaleDialog() {
+		logger.info("Open the locale dialog");
+
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource(
+				"/com/properned/gui/localeFrame.fxml"));
+		loader.setResources(MessageReader.getInstance().getBundle());
+
+		try {
+			loader.load();
+
+			Parent root = loader.getRoot();
+
+			Stage modalDialog = new Stage(StageStyle.UNIFIED);
+			modalDialog.initModality(Modality.APPLICATION_MODAL);
+			modalDialog.initOwner(Properned.getInstance().getPrimaryStage());
+			modalDialog.setTitle(MessageReader.getInstance().getMessage(
+					"manageLocale.title"));
+			modalDialog.setResizable(true);
+			modalDialog.getIcons().add(
+					new Image("/com/properned/style/icon/icon_16.png"));
+
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add("/com/properned/style/application.css");
+
+			modalDialog.setScene(scene);
+
+			modalDialog.showAndWait();
+		} catch (IOException e) {
+			Properned.getInstance().showError(
+					MessageReader.getInstance().getMessage("error.openFrame"),
+					e);
 		}
 	}
 
 	public void openPropertiesFile() {
+		logger.info("Open the 'Open file' dialog");
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(MessageReader.getInstance().getMessage(
 				"window.openFile.title"));
-		File lastSelectedFile = new File(Preferences.getInstance()
-				.getLastPathUsed());
-		if (lastSelectedFile != null && lastSelectedFile.exists()
+		String lastPathUsed = Preferences.getInstance().getLastPathUsed();
+		File lastSelectedFile = new File(lastPathUsed);
+		if (StringUtils.isNotEmpty(lastPathUsed) && lastSelectedFile != null
+				&& lastSelectedFile.getParentFile() != null
 				&& lastSelectedFile.getParentFile().exists()) {
 			fileChooser.setInitialDirectory(lastSelectedFile.getParentFile());
 		}
 		File selectedFile = fileChooser.showOpenDialog(Properned.getInstance()
 				.getPrimaryStage().getScene().getWindow());
 		if (selectedFile != null) {
-			Task<MultiLanguageProperties> loadTask = new Task<MultiLanguageProperties>() {
+			logger.info("Selected file : " + selectedFile.getAbsolutePath());
+			Task<Void> loadTask = new Task<Void>() {
 				@Override
-				protected MultiLanguageProperties call() throws Exception {
-					return loadFileList(selectedFile);
+				protected Void call() throws Exception {
+					loadFileList(selectedFile);
+					return null;
 				}
 			};
 			loadTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 				@Override
 				public void handle(WorkerStateEvent event) {
-					MultiLanguageProperties properties = loadTask.getValue();
-
-					multiLanguageProperties.getListMessageKey().clear();
-					multiLanguageProperties.getListMessageKey().addAll(
-							properties.getListMessageKey());
-
-					multiLanguageProperties.setMapPropertiesByLocale(properties
-							.getMapPropertiesByLocale());
-					multiLanguageProperties
-							.setMapPropertiesFileByLocale(properties
-									.getMapPropertiesFileByLocale());
-					multiLanguageProperties.setBaseName(properties
-							.getBaseName());
-					multiLanguageProperties.setIsDirty(false);
+					logger.info("load successfull");
+					Properned.getInstance().getPrimaryStage().getScene()
+							.setOnKeyReleased(new EventHandler<KeyEvent>() {
+								@Override
+								public void handle(KeyEvent event) {
+									if (event.getCode() == KeyCode.S
+											&& event.isControlDown()) {
+										logger.info("CTRL-S detected");
+										save();
+										event.consume();
+									}
+								}
+							});
+					Preferences.getInstance().addFileToRecentFileList(
+							selectedFile.getAbsolutePath());
 				}
 			});
 			Executors.newSingleThreadExecutor().submit(loadTask);
 		}
 	}
 
-	private MultiLanguageProperties loadFileList(File selectedFile) {
-		Preferences.getInstance().setLastPathUsed(
-				selectedFile.getAbsolutePath());
-		String fileName = selectedFile.getName();
-		String baseNameTemp = fileName.substring(0, fileName.lastIndexOf("."));
+	public void loadFileList(File selectedFile) {
+		Platform.runLater(new Runnable() {
 
-		if (fileName.contains("_")) {
-			baseNameTemp = fileName.substring(0, fileName.indexOf("_"));
-		}
-		final String baseName = baseNameTemp;
+			@Override
+			public void run() {
+				logger.info("Load the file list associated to '"
+						+ selectedFile.getAbsolutePath() + "'");
 
-		List<PropertiesFile> fileList = Arrays
-				.asList(selectedFile.getParentFile().listFiles(
-						new FileFilter() {
-							@Override
-							public boolean accept(File pathname) {
-								return pathname.isFile()
-										&& pathname.getName().startsWith(
-												baseName)
-										&& pathname.getName().endsWith(
-												".properties");
-							}
-						})).stream().map(new Function<File, PropertiesFile>() {
-					@Override
-					public PropertiesFile apply(File t) {
-						String language = "";
-						if (t.getName().contains("_")) {
-							language = t.getName().substring(
-									t.getName().indexOf("_") + 1,
-									t.getName().lastIndexOf("."));
-						}
-						return new PropertiesFile(t.getAbsolutePath(),
-								baseName, new Locale(language));
+				if (MultiLanguageProperties.getInstance().getIsDirty()) {
+					ButtonType result = askForSave();
+					if (result.getButtonData() == ButtonData.CANCEL_CLOSE) {
+						// The file must not be loaded
+						return;
 					}
-				}).collect(Collectors.<PropertiesFile> toList());
+				}
+				Preferences.getInstance().setLastPathUsed(
+						selectedFile.getAbsolutePath());
+				String fileName = selectedFile.getName();
+				String baseNameTemp = fileName.substring(0,
+						fileName.lastIndexOf("."));
 
-		try {
-			return MultiLanguageProperties.loadFileList(baseName, fileList);
-		} catch (IOException e) {
-			Properned.getInstance().showError(
-					MessageReader.getInstance().getMessage("error.load"), e);
-		}
-		// no load, we return current object
-		return multiLanguageProperties;
+				if (fileName.contains("_")) {
+					baseNameTemp = fileName.substring(0, fileName.indexOf("_"));
+				}
+				final String baseName = baseNameTemp;
+
+				List<PropertiesFile> fileList = Arrays
+						.asList(selectedFile.getParentFile().listFiles(
+								new FileFilter() {
+									@Override
+									public boolean accept(File pathname) {
+										return pathname.isFile()
+												&& pathname.getName()
+														.startsWith(baseName)
+												&& pathname.getName().endsWith(
+														".properties");
+									}
+								})).stream()
+						.map(new Function<File, PropertiesFile>() {
+							@Override
+							public PropertiesFile apply(File t) {
+								String language = "";
+								if (t.getName().contains("_")) {
+									language = t.getName().substring(
+											t.getName().indexOf("_") + 1,
+											t.getName().lastIndexOf("."));
+								}
+								return new PropertiesFile(t.getAbsolutePath(),
+										baseName, new Locale(language));
+							}
+						}).collect(Collectors.<PropertiesFile> toList());
+
+				try {
+					multiLanguageProperties.loadFileList(baseName, fileList);
+				} catch (IOException e) {
+					Properned.getInstance().showError(
+							MessageReader.getInstance()
+									.getMessage("error.load"), e);
+				}
+			}
+		});
 	}
 
 	@FXML
 	public void close() {
-		System.out.println("Fermeture par menu");
+		logger.info("closed by menu");
 		Properned
 				.getInstance()
 				.getPrimaryStage()
@@ -333,5 +449,61 @@ public class SystemController {
 				.handle(new WindowEvent(Properned.getInstance()
 						.getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
 		Properned.getInstance().getPrimaryStage().close();
+	}
+
+	public ButtonType askForSave() {
+		logger.info("Save alert open");
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(MessageReader.getInstance().getMessage(
+				"popup.confirmation.warning"));
+		alert.setHeaderText(MessageReader.getInstance().getMessage(
+				"popup.confirmation.close.title"));
+		alert.setContentText(MessageReader.getInstance().getMessage(
+				"popup.confirmation.close.body"));
+
+		ButtonType buttonTypeYes = new ButtonType(MessageReader.getInstance()
+				.getMessage("yes"));
+		ButtonType buttonTypeNo = new ButtonType(MessageReader.getInstance()
+				.getMessage("no"));
+		ButtonType buttonTypeCancel = new ButtonType("cancel",
+				ButtonData.CANCEL_CLOSE);
+		alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo,
+				buttonTypeCancel);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == buttonTypeYes) {
+			logger.info("the user want to save current files");
+			this.save();
+		} else if (result.get() == buttonTypeNo) {
+			// Nothing to do here
+			logger.info("the user doesn't want to save current files");
+		} else {
+			logger.info("Properned close cancelled");
+		}
+		return result.get();
+
+	}
+
+	public void populateRecentFileMenu() {
+		logger.info("Loading recent files");
+
+		recentFileMenu.getItems().clear();
+		List<RecentFile> recentFileList = Preferences.getInstance()
+				.getRecentFileList();
+		for (final RecentFile recentFile : recentFileList) {
+			if (recentFile.getFile().exists()) {
+				MenuItem menuItemRecentFile = new MenuItem(recentFile.getFile()
+						.getAbsolutePath());
+				menuItemRecentFile.setMnemonicParsing(false);
+				menuItemRecentFile.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						loadFileList(recentFile.getFile());
+					}
+				});
+				recentFileMenu.getItems().add(menuItemRecentFile);
+			}
+		}
 	}
 }

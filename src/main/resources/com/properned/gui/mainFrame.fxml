@@ -26,6 +26,7 @@
                                 <items>
                                   <Button fx:id="openButton" mnemonicParsing="false" onAction="#openPropertiesFile" />
                                     <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" />
+                                    <Button fx:id="localeButton" mnemonicParsing="false" onAction="#openLocaleDialog" />
                                 </items>
                               </ToolBar>
                            </top>
@@ -52,16 +53,21 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="%menu.file">
+          <Menu mnemonicParsing="false" onShowing="#populateRecentFileMenu" text="%menu.file">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#openPropertiesFile" text="%menu.file.open" />
+              	<Menu fx:id="recentFileMenu" mnemonicParsing="false" text="%menu.recentFile">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                    </items>
+                  </Menu>
                   <MenuItem mnemonicParsing="false" onAction="#close" text="%menu.file.close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu.help">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#openAboutDialog" text="%menu.help.about" />
-                  <MenuItem mnemonicParsing="false" text="%menu.help.help" />
+                  <MenuItem mnemonicParsing="false" onAction="#openHelpDialog" text="%menu.help.help" />
             </items>
           </Menu>
         </menus>

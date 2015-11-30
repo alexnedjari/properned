@@ -1,5 +1,6 @@
 package com.properned.application;
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Application;
@@ -9,9 +10,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -21,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.properned.application.preferences.Preferences;
 import com.properned.application.preferences.PropernedProperties;
+import com.properned.model.MultiLanguageProperties;
 
 /**
  * Properned is a software that can be used to edit java properties files 2015
@@ -45,6 +49,7 @@ import com.properned.application.preferences.PropernedProperties;
 public class Properned extends Application {
 
 	private Stage primaryStage;
+	private SystemController controller;
 	private static Properned instance;
 
 	private Logger logger = LogManager.getLogger(this.getClass());
@@ -52,10 +57,11 @@ public class Properned extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			logger.info("Lancement de "
+			logger.info("Launching "
 					+ PropernedProperties.getInstance()
 							.getApplicationPresentation());
 
+			Platform.setImplicitExit(false);
 			instance = this;
 			Properned.initializePreference();
 			this.primaryStage = primaryStage;
@@ -71,24 +77,47 @@ public class Properned extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.getIcons().add(
 					new Image("/com/properned/style/icon/icon_16.png"));
+			controller = loader.getController();
 			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
 				@Override
 				public void handle(WindowEvent event) {
+					logger.info("Properned close required");
+					if (MultiLanguageProperties.getInstance().getIsDirty()) {
+						ButtonType result = controller.askForSave();
+						if (result.getButtonData() == ButtonData.CANCEL_CLOSE) {
+							// The software must not be closed
+							event.consume();
+							return;
+						}
+					}
 					Preferences.getInstance().save();
+					Platform.exit();
+					System.exit(0);
+
+				}
+
+			});
+
+			scene.setOnDragOver(new EventHandler<DragEvent>() {
+				@Override
+				public void handle(DragEvent event) {
+					if (event.getDragboard().hasFiles()) {
+						event.acceptTransferModes(TransferMode.ANY);
+					}
+
+					event.consume();
 
 				}
 			});
 
-			final SystemController controller = (SystemController) loader
-					.getController();
-			root.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			scene.setOnDragDropped(new EventHandler<DragEvent>() {
 				@Override
-				public void handle(KeyEvent event) {
-					if (event.getCode() == KeyCode.S && event.isControlDown()) {
-						controller.save();
-						event.consume();
-					}
+				public void handle(DragEvent event) {
+					File selectedFile = event.getDragboard().getFiles().get(0);
+					logger.info("Drop a file on properned : " + selectedFile);
+					controller.loadFileList(selectedFile);
+
 				}
 			});
 
