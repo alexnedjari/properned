@@ -1,6 +1,5 @@
 package com.properned.application;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -43,7 +42,9 @@ public class HelpController {
 		URL url = this.getClass().getResource("/com/properned/help/help.html");
 		String content;
 		try {
-			content = IOUtils.toString(new FileInputStream(url.getFile()));
+			// content = IOUtils.toString(new FileInputStream(url.getFile()));
+			content = IOUtils.toString(this.getClass().getResourceAsStream(
+					"/com/properned/help/help.html"));
 			webView.getEngine().loadContent(content);
 		} catch (IOException e) {
 			Properned.getInstance().showError(
