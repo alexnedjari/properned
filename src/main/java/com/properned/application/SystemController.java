@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -115,6 +116,13 @@ public class SystemController {
 				.titleProperty()
 				.bind(multiLanguageProperties
 						.baseNameProperty()
+						.concat(Bindings
+								.when(multiLanguageProperties
+										.isLoadedProperty())
+								.then(new SimpleStringProperty(" (").concat(
+										multiLanguageProperties
+												.parentDirectoryPathProperty())
+										.concat(")")).otherwise(""))
 						.concat(Bindings
 								.when(multiLanguageProperties.isDirtyProperty())
 								.then(" *").otherwise("")));

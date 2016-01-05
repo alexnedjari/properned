@@ -101,6 +101,10 @@ public class MultiLanguageProperties {
 		return isDirty;
 	}
 
+	public StringProperty parentDirectoryPathProperty() {
+		return parentDirectoryPath;
+	}
+
 	public StringProperty baseNameProperty() {
 		return baseName;
 	}
