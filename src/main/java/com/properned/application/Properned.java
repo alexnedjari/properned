@@ -19,7 +19,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,7 +52,7 @@ public class Properned extends Application {
 	private SystemController controller;
 	private static Properned instance;
 
-	private static Logger logger = LogManager.getLogger(Properned.class);
+	private Logger logger = LogManager.getLogger(this.getClass());
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -153,8 +152,6 @@ public class Properned extends Application {
 	}
 
 	public static void main(String[] args) {
-		logger.info("Launch Properned with args "
-				+ StringUtils.join(args, ", "));
 		launch(args);
 	}
 

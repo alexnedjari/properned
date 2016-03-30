@@ -16,7 +16,7 @@
 		<echo>BASE DIR : ${basedir}</echo>
 
 		<echo message="Expand script file" />
-		<delete file="package/windows/Properned.iss" />
+		<delete file="package/windows/Properned.iss" failonerror="false"/>
 		<copy file="package/windows/Properned.base.iss" tofile="package/windows/Properned.iss">
 			<filterchain>
 				<expandproperties />
@@ -24,7 +24,7 @@
 		</copy>
 		
 		<echo message="Expand properties file" />
-		<delete file="package/windows/Properned.properties" />
+		<delete file="package/windows/Properned.properties" failonerror="false"/>
 		<copy file="package/windows/Properned.base.properties" tofile="package/windows/Properned.properties">
 			<filterchain>
 				<expandproperties />
@@ -37,10 +37,11 @@
 		    <fx:application name="Properned"
 		            mainClass="com.properned.application.Properned"/>
 		    <fx:resources>
-		        <fx:fileset dir="../target/" includes="properned-${version}.jar"/>
-		    	<fx:fileset dir="../target/" includes="dependency-jars/*.*"/>
-		    	<fx:fileset dir="package/windows/" includes="Properned.properties"/>
-		    	<fx:fileset dir="package/windows/" includes="linkedlibrairies.txt"/>
+		        <fx:fileset dir="${basedir}/../target/" includes="properned-${version}.jar"/>
+		    	<fx:fileset dir="${basedir}/../target/" includes="dependency-jars/*.*"/>
+		    	<fx:fileset dir="${basedir}/../" includes="LICENCE.txt"/>
+		    	<fx:fileset dir="${basedir}/package/windows/" includes="Properned.properties"/>
+		    	<fx:fileset dir="${basedir}/package/windows/" includes="linkedlibrairies.txt"/>
 		    </fx:resources>
 			<fx:platform basedir="${basedir}/jdk1.8.0_77-32"/>
 			<fx:info title="Properned" vendor="Alexandre NEDJARI" />
