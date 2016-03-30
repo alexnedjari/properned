@@ -22,7 +22,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -359,27 +358,7 @@ public class SystemController {
 					return null;
 				}
 			};
-			loadTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-				@Override
-				public void handle(WorkerStateEvent event) {
-					logger.info("load successfull");
-					Properned.getInstance().getPrimaryStage().getScene()
-							.setOnKeyReleased(new EventHandler<KeyEvent>() {
-								@Override
-								public void handle(KeyEvent event) {
-									if (event.getCode() == KeyCode.S
-											&& event.isControlDown()) {
-										logger.info("CTRL-S detected");
-										save();
-										event.consume();
-									}
-								}
-							});
-					Preferences.getInstance().addFileToRecentFileList(
-							selectedFile.getAbsolutePath());
-				}
-			});
 			Executors.newSingleThreadExecutor().submit(loadTask);
 		}
 	}
@@ -438,6 +417,20 @@ public class SystemController {
 
 				try {
 					multiLanguageProperties.loadFileList(baseName, fileList);
+					Preferences.getInstance().addFileToRecentFileList(
+							selectedFile.getAbsolutePath());
+					Properned.getInstance().getPrimaryStage().getScene()
+							.setOnKeyReleased(new EventHandler<KeyEvent>() {
+								@Override
+								public void handle(KeyEvent event) {
+									if (event.getCode() == KeyCode.S
+											&& event.isControlDown()) {
+										logger.info("CTRL-S detected");
+										save();
+										event.consume();
+									}
+								}
+							});
 				} catch (IOException e) {
 					Properned.getInstance().showError(
 							MessageReader.getInstance()
