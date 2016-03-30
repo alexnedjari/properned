@@ -3,8 +3,8 @@
 [Setup]
 AppId={{application}}
 AppName=Properned
-AppVersion=3.1
-AppVerName=Properned 3.1
+AppVersion=3.2
+AppVerName=Properned 3.2
 AppPublisher=Alexandre NEDJARI
 AppComments=Properned
 AppCopyright=Copyright (C) 2015
@@ -24,7 +24,7 @@ DefaultGroupName=Alexandre NEDJARI
 LicenseFile=
 ;WinXP or above
 MinVersion=0,5.1 
-OutputBaseFilename=Properned-3.1
+OutputBaseFilename=Properned-3.2
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=lowest
