@@ -19,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +53,7 @@ public class Properned extends Application {
 	private SystemController controller;
 	private static Properned instance;
 
-	private Logger logger = LogManager.getLogger(this.getClass());
+	private static Logger logger = LogManager.getLogger(Properned.class);
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -122,6 +123,20 @@ public class Properned extends Application {
 			});
 
 			primaryStage.show();
+
+			// Check if a file is gived as parameter :
+			if (this.getParameters().getUnnamed().size() > 0) {
+				String fileToOpenName = this.getParameters().getUnnamed()
+						.get(0);
+				File selectedFile = new File(fileToOpenName);
+				if (selectedFile.exists()) {
+					controller.loadFileList(selectedFile);
+				} else {
+					logger.warn("First parameter '" + fileToOpenName
+							+ " cannot be opened as a file");
+				}
+			}
+
 		} catch (IOException e) {
 			showError(
 					MessageReader.getInstance().getMessage(
@@ -138,6 +153,8 @@ public class Properned extends Application {
 	}
 
 	public static void main(String[] args) {
+		logger.info("Launch Properned with args "
+				+ StringUtils.join(args, ", "));
 		launch(args);
 	}
 

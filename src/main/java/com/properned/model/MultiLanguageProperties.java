@@ -137,6 +137,8 @@ public class MultiLanguageProperties {
 				baseName.set(file.getBaseName());
 				parentDirectoryPath.set(file.getParent() + File.separator);
 				isLoaded.set(true);
+				logger.info(listMessageKey.size()
+						+ " keys are loaded for locale '" + locale + "'");
 			}
 		});
 
@@ -196,6 +198,8 @@ public class MultiLanguageProperties {
 			if (properties == null) {
 				continue;
 			}
+			logger.info("For the locale '" + locale + "', there is "
+					+ properties.size() + " properties to save");
 
 			OutputStream fileOutputStream = null;
 			try {

@@ -4,5 +4,6 @@
 bin/*
 dist/*
 target/*
+install/jdk*
 preferences.properties
 Properned.properties
