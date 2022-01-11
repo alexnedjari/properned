@@ -7,3 +7,4 @@ target/*
 install/jdk*
 preferences.properties
 Properned.properties
+/target/
