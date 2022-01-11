@@ -26,7 +26,7 @@
                                 <items>
                                   <Button fx:id="openButton" mnemonicParsing="false" onAction="#openPropertiesFile" />
                                     <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" />
-                                    <Button fx:id="localeButton" mnemonicParsing="false" onAction="#openLocaleDialog" />
+                                    <!-- Button fx:id="localeButton" mnemonicParsing="false" onAction="#openLocaleDialog" /-->
                                 </items>
                               </ToolBar>
                            </top>

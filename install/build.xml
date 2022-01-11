@@ -1,18 +1,18 @@
 <project xmlns:fx="javafx:com.sun.javafx.tools.ant">
-	<!-- Import AntContrib 
+	<!-- Import AntContrib
 	<taskdef resource="net/sf/antcontrib/antlib.xml" />
-	<taskdef resource="net/sf/antcontrib/antlib.xml"> 
-		<classpath> 
-			<pathelement location="lib\ant-contrib\ant-contrib-1.0b3.jar" /> 
-		</classpath> 
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="lib\ant-contrib\ant-contrib-1.0b3.jar" />
+		</classpath>
 	</taskdef> -->
-	
-	<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"      
+
+	<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
 						     uri="javafx:com.sun.javafx.tools.ant"
-						     classpath=".:C:\Program Files (x86)\Java\jdk1.8.0_60\lib\ant-javafx.jar"/>  	
-	
+						     classpath=".:D:\Cochise\Jdk\64bits\1.8.0\lib\ant-javafx.jar"/>
+
 	<target name="deploy" description="Package the application">
-		<echo>DEPLOY ${version}</echo> 
+		<echo>DEPLOY ${version}</echo>
 		<echo>BASE DIR : ${basedir}</echo>
 
 		<echo message="Expand script file" />
@@ -22,7 +22,7 @@
 				<expandproperties />
 			</filterchain>
 		</copy>
-		
+
 		<echo message="Expand properties file" />
 		<delete file="package/windows/Properned.properties" failonerror="false"/>
 		<copy file="package/windows/Properned.base.properties" tofile="package/windows/Properned.properties">
@@ -30,9 +30,9 @@
 				<expandproperties />
 			</filterchain>
 		</copy>
-		
-		
-		<fx:deploy width="800" height="600" outdir="dist"  
+
+
+		<fx:deploy width="800" height="600" outdir="dist"
 		        outfile="Properned" nativeBundles="installer" verbose="true" >
 		    <fx:application name="Properned"
 		            mainClass="com.properned.application.Properned"/>
@@ -46,9 +46,9 @@
 			<fx:platform basedir="${basedir}/jdk1.8.0_77-32"/>
 			<fx:info title="Properned" vendor="Alexandre NEDJARI" />
 			<fx:preferences menu="true" shortcut="true"/>
-		</fx:deploy> 
+		</fx:deploy>
 	</target>
-	
+
 	<target name="install-maven" description="Launch install target on properned project">
 		<exec dir=".." executable="cmd">
 		        <arg value="/C"/>

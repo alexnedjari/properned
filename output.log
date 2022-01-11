@@ -1,0 +1,53 @@
+13:35:28.246 [JavaFX Application Thread] INFO  com.properned.application.Properned - Launching Properned 0
+13:35:28.254 [JavaFX Application Thread] INFO  com.properned.application.preferences.Preferences - Initial value for 'recent.file.list' : C:\test\Properned\standard.properties*1448726216498|C:\test\Properned\specif-etat.properties*1451997268331|C:\test\Properned\standard_en_CA.properties*1451997275322|C:\test\Properned\test2\specif-etat.properties*1451998323934|C:\test\Properned\test2\specif-etat_en.properties*1451998360724|D:\publis_ireport\DESVOYS\BON LIVRAISON_V2\ireport_de.properties*1451998714484|D:\publis_ireport\DESVOYS\BON LIVRAISON_V2\specif-etat.properties*1459301084792|C:\test\Properned\specif-etat_sp.properties*1459301108598|
+13:35:28.255 [JavaFX Application Thread] INFO  com.properned.application.preferences.Preferences - Initial value for 'always.on.top' : false
+13:35:28.255 [JavaFX Application Thread] INFO  com.properned.application.preferences.Preferences - Initial value for 'last.path.used' : C:\test\Properned\specif-etat_sp.properties
+13:35:28.365 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Initialize System controller
+13:35:28.695 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Initializing the multi language properties instance
+13:35:30.884 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Open the 'Open file' dialog
+13:35:47.906 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Selected file : D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard.properties
+13:35:47.910 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Load the file list associated to 'D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard.properties'
+13:35:47.911 [JavaFX Application Thread] INFO  com.properned.application.preferences.Preferences - last.path.used is changed from C:\test\Properned\specif-etat_sp.properties to D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard.properties
+13:35:47.919 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load a multi language properties (standard) with 10 files
+13:35:47.919 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard.properties
+13:35:47.972 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_de.properties
+13:35:47.973 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_en.properties
+13:35:47.994 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_en_CA.properties
+13:35:48.002 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_en_US.properties
+13:35:48.002 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_fr_CA.properties
+13:35:48.021 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_it.properties
+13:35:48.022 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_ro.properties
+13:35:48.025 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_sp.properties
+13:35:48.025 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - load the file D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard_zh.properties
+13:35:48.026 [JavaFX Application Thread] INFO  com.properned.application.preferences.Preferences - recent.file.list is changed to D:\Git\STANDARD\N9-7\N9_CochiseI18n\properties\standard.properties*1641904548026|
+13:35:48.028 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Initializing the multi language properties instance
+13:35:48.028 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale ''
+13:35:48.095 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33772 keys are loaded for locale ''
+13:35:48.095 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'de'
+13:35:48.150 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33772 keys are loaded for locale 'de'
+13:35:48.151 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'en'
+13:35:48.225 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'en'
+13:35:48.226 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'en_ca'
+13:35:48.274 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'en_ca'
+13:35:48.275 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'en_us'
+13:35:48.320 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'en_us'
+13:35:48.320 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'fr_ca'
+13:35:48.374 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'fr_ca'
+13:35:48.374 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'it'
+13:35:48.427 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'it'
+13:35:48.428 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'ro'
+13:35:48.467 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'ro'
+13:35:48.468 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'sp'
+13:35:48.493 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'sp'
+13:35:48.493 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - Add a propertie file for the locale 'zh'
+13:35:48.523 [JavaFX Application Thread] INFO  com.properned.model.MultiLanguageProperties - 33913 keys are loaded for locale 'zh'
+13:35:50.262 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : Confirmez-vous
+13:35:50.814 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : HistoriqueAnomalieCalculPMP.typeAnomalie.stockNulOuNegatif
+13:35:51.287 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : LigneReceptionAchat.ordreFabrication
+13:35:52.934 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : accesPrixVente.affichageDemandeToutClient
+13:35:57.302 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : acheteur.initiales
+13:35:57.879 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : acteur.codeActeur
+13:35:58.965 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : actionCommerciale.dateFinPrevu
+13:35:59.684 [JavaFX Application Thread] INFO  com.properned.application.SystemController - Message key selection changed : actionCommerciale.exception.dateFinPrevueSupDebut
+13:36:14.692 [JavaFX Application Thread] INFO  com.properned.application.Properned - Properned close required
+13:36:14.692 [JavaFX Application Thread] INFO  com.properned.application.preferences.Preferences - Save preferences
