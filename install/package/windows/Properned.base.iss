@@ -1,18 +1,18 @@
 ;This file will be executed next to the application bundle image
-;I.e. current directory will contain folder Properned with application files
+;I.e. current directory will contain folder SoundLooper with application files
 [Setup]
 AppId={{application}}
-AppName=Properned
+AppName=SoundLooper
 AppVersion=${version}
-AppVerName=Properned ${version}
+AppVerName=SoundLooper ${version}
 AppPublisher=Alexandre NEDJARI
-AppComments=Properned
-AppCopyright=Copyright (C) 2015
+AppComments=SoundLooper
+AppCopyright=Copyright (C) 2016
 ;AppPublisherURL=http://java.com/
 ;AppSupportURL=http://java.com/
 ;AppUpdatesURL=http://java.com/
-;DefaultDirName={localappdata}\Properned
-DefaultDirName={pf}\Properned
+;DefaultDirName={localappdata}\SoundLooper
+DefaultDirName={pf}\SoundLooper
 DisableStartupPrompt=true
 DisableDirPage=false
 DisableProgramGroupPage=Yes
@@ -24,18 +24,17 @@ DefaultGroupName=Alexandre NEDJARI
 LicenseFile=
 ;WinXP or above
 MinVersion=0,5.1 
-OutputBaseFilename=Properned-${version}
+OutputBaseFilename=SoundLooper-${version}
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=lowest
-SetupIconFile=Properned\Properned.ico
-UninstallDisplayIcon={app}\Properned.ico
-UninstallDisplayName=Properned
+SetupIconFile=SoundLooper\SoundLooper.ico
+UninstallDisplayIcon={app}\SoundLooper.ico
+UninstallDisplayName=SoundLooper
 WizardImageStretch=Yes
-WizardImageFile=Properned-setup-icon.bmp   
-;WizardSmallImageFile=Properned-setup-icon.bmp   
+WizardImageFile=SoundLooper-setup-icon.bmp   
 ArchitecturesInstallIn64BitMode=
-
+ChangesAssociations=Yes
 
 [Languages]
 ;Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -48,24 +47,24 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "{app}"; Permissions : users-modify
 
 [Files]
-Source: "Properned\Properned.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Properned\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "SoundLooper\SoundLooper.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SoundLooper\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\Properned"; Filename: "{app}\Properned.exe"; IconFilename: "{app}\Properned.ico"; 
+Name: "{group}\SoundLooper"; Filename: "{app}\SoundLooper.exe"; IconFilename: "{app}\SoundLooper.ico"; 
 ;Check: returnTrue()
-Name: "{commondesktop}\Properned"; Filename: "{app}\Properned.exe";  IconFilename: "{app}\Properned.ico"; 
+Name: "{commondesktop}\SoundLooper"; Filename: "{app}\SoundLooper.exe";  IconFilename: "{app}\SoundLooper.ico"; 
 ;Check: returnFalse()
 
 
 [Run]
-;Filename: "{app}\Properned.exe"; Parameters: "-Xappcds:generatecache"; Check: returnFalse()
-Filename: "{app}\Properned.exe"; Description: "{cm:LaunchProgram,Properned}"; Flags: nowait postinstall skipifsilent; 
+;Filename: "{app}\SoundLooper.exe"; Parameters: "-Xappcds:generatecache"; Check: returnFalse()
+Filename: "{app}\SoundLooper.exe"; Description: "{cm:LaunchProgram,SoundLooper}"; Flags: nowait postinstall skipifsilent; 
 ;Check: returnTrue()
-;Filename: "{app}\Properned.exe"; Parameters: "-install -svcName ""Properned"" -svcDesc ""Properned"" -mainExe ""Properned.exe""  "; Check: returnFalse()
+;Filename: "{app}\SoundLooper.exe"; Parameters: "-install -svcName ""SoundLooper"" -svcDesc ""SoundLooper"" -mainExe ""SoundLooper.exe""  "; Check: returnFalse()
 
 [UninstallRun]
-Filename: "{app}\Properned.exe "; Parameters: "-uninstall -svcName Properned -stopOnUninstall"; 
+Filename: "{app}\SoundLooper.exe "; Parameters: "-uninstall -svcName SoundLooper -stopOnUninstall"; 
 ;Check: returnFalse()
 
 ;[Code]
