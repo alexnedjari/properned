@@ -43,7 +43,7 @@
 		    	<fx:fileset dir="${basedir}/package/windows/" includes="Properned.properties"/>
 		    	<fx:fileset dir="${basedir}/package/windows/" includes="linkedlibrairies.txt"/>
 		    </fx:resources>
-			<fx:platform basedir="${basedir}/jdk1.8.0_77-32"/>
+			<fx:platform basedir="${basedir}/jdk1.8.0_77-64"/>
 			<fx:info title="Properned" vendor="Alexandre NEDJARI" />
 			<fx:preferences menu="true" shortcut="true"/>
 		</fx:deploy>
